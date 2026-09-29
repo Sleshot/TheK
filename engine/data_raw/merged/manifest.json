@@ -1,0 +1,17 @@
+{
+ "buildings": 44457,
+ "roads": 0,
+ "green": 0,
+ "water": 0,
+ "landuse": 0,
+ "rels": 0,
+ "rails": 0,
+ "poi": 0,
+ "bbox": [
+  44.9,
+  38.78,
+  45.17,
+  39.24
+ ],
+ "fetched_at": "2026-09-29T15:37:28Z"
+}
