@@ -1,0 +1,40 @@
+name: fetch-osm-data
+
+on:
+  push:
+    paths:
+      - 'engine/tools/fetch_overpass.py'
+      - 'engine/tools/force-fetch.txt'
+      - '.github/workflows/osm-fetch.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency: osm-fetch
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch OpenStreetMap data for Krasnodar
+        run: python3 engine/tools/fetch_overpass.py
+      - name: Commit results
+        run: |
+          git config user.email "arena-bot@users.noreply.github.com"
+          git config user.name "arena-data-bot"
+          git add engine/data_raw/ || true
+          git status --porcelain | head -50
+          if git diff --cached --quiet; then
+            echo "no data changes"
+          else
+            git commit -m "data: OSM extract update [bot]"
+            git push
+          fi
