@@ -34,7 +34,10 @@ jobs:
           git status --porcelain | head -50
           if git diff --cached --quiet; then
             echo "no data changes"
-          else
-            git commit -m "data: OSM extract update [bot]"
-            git push
+            exit 0
           fi
+          git commit -m "data: OSM extract update [bot]"
+          BRANCH="${GITHUB_REF_NAME:-arena/01a0ed5c-thek}"
+          git fetch origin "$BRANCH"
+          git rebase "origin/$BRANCH" || echo "rebase failed, pushing anyway may fail"
+          git push origin "HEAD:$BRANCH"
